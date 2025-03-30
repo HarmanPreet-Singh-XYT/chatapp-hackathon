@@ -1,10 +1,9 @@
-"use client"
 import React from 'react'
-import Home from './components/Home'
+import EnhancedChatApp from '../components/Interface'
 
 const page = () => {
   return (
-    <Home/>
+    <EnhancedChatApp/>
   )
 }
 

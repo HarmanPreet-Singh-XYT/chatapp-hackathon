@@ -1,10 +1,9 @@
-"use client"
 import React from 'react'
-import Home from './components/Home'
+import { Contact } from '../components/Contact'
 
 const page = () => {
   return (
-    <Home/>
+    <Contact/>
   )
 }
 

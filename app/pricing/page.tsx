@@ -1,10 +1,10 @@
-"use client"
+'use client'
 import React from 'react'
-import Home from './components/Home'
+import PricingPage from '../components/PricingPage'
 
 const page = () => {
   return (
-    <Home/>
+    <PricingPage/>
   )
 }
 
