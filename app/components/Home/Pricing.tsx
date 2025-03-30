@@ -222,17 +222,19 @@ const PricingComponent = () => {
               </div>
                   
               {/* CTA Button */}
-              <button 
-                className={`
-                  w-full py-3 rounded-lg text-white font-semibold transition-all
-                  ${plan.recommended 
-                    ? 'bg-green-600 hover:bg-green-700' 
-                    : 'bg-gray-800 hover:bg-gray-900'}
-                `}
-              >
-                {plan.name === 'Nebula' ? 'Contact Sales' : 'Get Started'}
-                <ArrowUpRight size={18} className="inline-block ml-2" />
-              </button>
+              <a href='/auth'>
+                <button 
+                  className={`
+                    w-full py-3 rounded-lg text-white font-semibold transition-all hover:cursor-pointer
+                    ${plan.recommended 
+                      ? 'bg-green-600 hover:bg-green-700' 
+                      : 'bg-gray-800 hover:bg-gray-900'}
+                  `}
+                >
+                  {plan.name === 'Nebula' ? 'Contact Sales' : 'Get Started'}
+                  <ArrowUpRight size={18} className="inline-block ml-2" />
+                </button>
+              </a>
             </motion.div>
           ))}
         </div>

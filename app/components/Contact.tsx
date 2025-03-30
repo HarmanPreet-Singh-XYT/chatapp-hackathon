@@ -5,10 +5,12 @@ import {
   Building, Users, ArrowRight, CheckCircle2, AlertCircle,
   Calendar, Video, Coffee, Headphones, BarChart2, 
   FileText, Briefcase, Shield, Zap, Star, Award,
-  Languages, Laptop, HelpCircle, Send, ChevronRight
+  Languages, Laptop, HelpCircle, Send, ChevronRight,
+  CalendarCheck
 } from 'lucide-react';
 import Navbar from './Pricing/Navbar';
 import Footer from './Home/Footer';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Contact = () => {
     const [formStatus, setFormStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -16,7 +18,9 @@ export const Contact = () => {
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'form' | 'meeting'>('form');
-
+    const [selectedType, setSelectedType] = useState(null);
+    const [isBooked, setIsBooked] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setFormStatus('success');
@@ -99,7 +103,67 @@ export const Contact = () => {
             duration: "20 min"
         }
     ];
+    // Handle booking confirmation
+  const handleBookMeeting = () => {
+    setIsBooked(true);
+    setTimeout(() => setShowConfirmation(true), 300);
+  };
+  
+  // Reset the form
+  const handleReset = () => {
+    setShowConfirmation(false);
+    setTimeout(() => {
+      setSelectedType(null);
+      setSelectedTime(null);
+      setIsBooked(false);
+    }, 300);
+  };
+  
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        when: "afterChildren",
+        staggerChildren: 0.05,
+        staggerDirection: -1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    },
+    exit: {
+      y: -20,
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
+  };
+  
+  const buttonVariants = {
+    rest: { scale: 1 },
+    hover: { scale: 1.05 },
+    tap: { scale: 0.98 }
+  };
 
+  const fadeVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.4 } },
+    exit: { opacity: 0, transition: { duration: 0.2 } }
+  };
     const timeSlots = [
         "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM",
         "11:00 AM", "11:30 AM", "1:00 PM", "1:30 PM",
@@ -381,86 +445,322 @@ export const Contact = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="max-w-4xl mx-auto">
-                            <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-gray-100/50">
-                                <h2 className="text-2xl font-bold mb-8">Schedule a Meeting</h2>
+                        <motion.div 
+                            className="max-w-4xl mx-auto"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            >
+                            <AnimatePresence mode="wait">
+                                {showConfirmation ? (
+                                <motion.div 
+                                    key="confirmation"
+                                    className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-gray-100/50 text-center"
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                    variants={containerVariants}
+                                >
+                                    <motion.div 
+                                    className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1, rotate: 360 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    >
+                                    <CalendarCheck className="w-8 h-8 text-green-600" />
+                                    </motion.div>
+                                    <motion.h2 variants={itemVariants} className="text-2xl font-bold mb-4">Meeting Scheduled!</motion.h2>
+                                    <motion.p variants={itemVariants} className="text-gray-600 mb-6">
+                                    You've booked a {selectedType?.title} for {selectedTime}. 
+                                    Check your email for confirmation and meeting details.
+                                    </motion.p>
+                                    <motion.button 
+                                    variants={buttonVariants}
+                                    initial="rest"
+                                    whileHover="hover"
+                                    whileTap="tap"
+                                    onClick={handleReset}
+                                    className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
+                                    >
+                                    Schedule Another Meeting
+                                    </motion.button>
+                                </motion.div>
+                                ) : (
+                                <motion.div 
+                                    key="scheduler"
+                                    className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-gray-100/50"
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                    variants={containerVariants}
+                                >
+                                    <motion.h2 variants={itemVariants} className="text-2xl font-bold mb-8">Schedule a Meeting</motion.h2>
 
-                                {/* Meeting Types */}
-                                <div className="grid md:grid-cols-3 gap-6 mb-12">
-                                    {meetingTypes.map((type, i) => (
-                                        <div
-                                            key={i}
-                                            className={`
-                                                bg-gray-50 rounded-2xl p-6 cursor-pointer transition-all duration-300
-                                                ${selectedTime 
-                                                    ? 'opacity-50 hover:opacity-100' 
-                                                    : 'hover:bg-indigo-50 hover:shadow-md'
-                                                }
-                                            `}
-                                            onClick={() => setSelectedTime(null)}
+                                    {/* Step indicator */}
+                                    <motion.div variants={itemVariants} className="flex items-center mb-8">
+                                    <motion.div 
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center ${!selectedType ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'}`}
+                                        animate={!selectedType ? { scale: [1, 1.1, 1] } : {}}
+                                        transition={{ duration: 0.5, repeat: 0 }}
+                                    >
+                                        1
+                                    </motion.div>
+                                    <motion.div 
+                                        className="h-1 w-12 bg-gray-200 mx-2"
+                                        initial={{ scaleX: 0 }}
+                                        animate={{ scaleX: 1 }}
+                                        transition={{ duration: 0.3, delay: 0.3 }}
+                                    ></motion.div>
+                                    <motion.div 
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center ${selectedType && !selectedTime ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'}`}
+                                        animate={selectedType && !selectedTime ? { scale: [1, 1.1, 1] } : {}}
+                                        transition={{ duration: 0.5, repeat: 0 }}
+                                    >
+                                        2
+                                    </motion.div>
+                                    <motion.div 
+                                        className="h-1 w-12 bg-gray-200 mx-2"
+                                        initial={{ scaleX: 0 }}
+                                        animate={{ scaleX: 1 }}
+                                        transition={{ duration: 0.3, delay: 0.5 }}
+                                    ></motion.div>
+                                    <motion.div 
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center ${selectedType && selectedTime ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'}`}
+                                        animate={selectedType && selectedTime ? { scale: [1, 1.1, 1] } : {}}
+                                        transition={{ duration: 0.5, repeat: 0 }}
+                                    >
+                                        3
+                                    </motion.div>
+                                    </motion.div>
+
+                                    {/* Meeting Types */}
+                                    <AnimatePresence mode="wait">
+                                    {!selectedType && (
+                                        <motion.div
+                                        key="meeting-types"
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
+                                        variants={fadeVariants}
                                         >
-                                            <div className="bg-white w-12 h-12 rounded-xl shadow-md flex items-center justify-center mb-4">
+                                        <motion.h3 variants={itemVariants} className="text-lg font-semibold mb-4">Select Meeting Type</motion.h3>
+                                        <motion.div 
+                                            className="grid md:grid-cols-3 gap-6 mb-12"
+                                            variants={containerVariants}
+                                        >
+                                            {meetingTypes.map((type, i) => (
+                                            <motion.div
+                                                key={i}
+                                                variants={itemVariants}
+                                                whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                                                className="bg-gray-50 rounded-2xl p-6 cursor-pointer transition-all duration-300"
+                                                onClick={() => setSelectedType(type)}
+                                            >
+                                                <motion.div 
+                                                className="bg-white w-12 h-12 rounded-xl shadow-md flex items-center justify-center mb-4"
+                                                whileHover={{ rotate: 5 }}
+                                                >
                                                 <type.icon className="w-6 h-6 text-indigo-600" />
-                                            </div>
-                                            <h3 className="text-lg font-semibold mb-2">{type.title}</h3>
-                                            <p className="text-gray-600 text-sm mb-4">{type.description}</p>
-                                            <div className="flex items-center text-sm text-gray-500">
+                                                </motion.div>
+                                                <h3 className="text-lg font-semibold mb-2">{type.title}</h3>
+                                                <p className="text-gray-600 text-sm mb-4">{type.description}</p>
+                                                <div className="flex items-center text-sm text-gray-500">
                                                 <Clock className="w-4 h-4 mr-2" />
                                                 {type.duration}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                                </div>
+                                            </motion.div>
+                                            ))}
+                                        </motion.div>
+                                        </motion.div>
+                                    )}
+                                    </AnimatePresence>
 
-                                {/* Time Slots */}
-                                <div className="mb-8">
-                                    <h3 className="text-lg font-semibold mb-4">Select a Time</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        {timeSlots.map((time, i) => (
-                                            <button
+                                    {/* Time Slots */}
+                                    <AnimatePresence mode="wait">
+                                    {selectedType && !selectedTime && (
+                                        <motion.div 
+                                        key="time-slots"
+                                        className="mb-8"
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
+                                        variants={fadeVariants}
+                                        >
+                                        <motion.div variants={itemVariants} className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-semibold">Select a Time</h3>
+                                            <motion.button 
+                                            onClick={() => setSelectedType(null)} 
+                                            className="text-indigo-600 text-sm hover:underline"
+                                            whileHover={{ x: -2 }}
+                                            whileTap={{ scale: 0.97 }}
+                                            >
+                                            Back to meeting types
+                                            </motion.button>
+                                        </motion.div>
+                                        
+                                        <motion.div 
+                                            variants={itemVariants}
+                                            className="bg-indigo-50 p-4 rounded-xl mb-6 flex items-center"
+                                            initial={{ x: -20, opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                                        >
+                                            <div className="bg-white w-10 h-10 rounded-lg shadow-sm flex items-center justify-center mr-4">
+                                            <selectedType.icon className="w-5 h-5 text-indigo-600" />
+                                            </div>
+                                            <div>
+                                            <p className="font-medium">{selectedType.title} • {selectedType.duration}</p>
+                                            <p className="text-sm text-gray-600">{selectedType.description}</p>
+                                            </div>
+                                        </motion.div>
+                                        
+                                        <motion.div 
+                                            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                                            variants={containerVariants}
+                                        >
+                                            {timeSlots.map((time, i) => (
+                                            <motion.button
                                                 key={i}
-                                                className={`
-                                                    px-4 py-3 rounded-xl border-2 transition-all duration-200
-                                                    ${selectedTime === time
-                                                        ? 'border-indigo-600 bg-indigo-50 text-indigo-600 shadow-md'
-                                                        : 'border-gray-200 hover:border-indigo-600 hover:bg-gray-50'
-                                                    }
-                                                `}
+                                                variants={itemVariants}
+                                                whileHover={{ y: -2, backgroundColor: "#F5F7FF", borderColor: "#6366F1" }}
+                                                whileTap={{ y: 0, scale: 0.98 }}
+                                                className="px-4 py-3 rounded-xl border-2 border-gray-200 transition-all duration-200"
                                                 onClick={() => setSelectedTime(time)}
                                             >
                                                 {time}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
+                                            </motion.button>
+                                            ))}
+                                        </motion.div>
+                                        </motion.div>
+                                    )}
+                                    </AnimatePresence>
 
-                                {/* Timezone Notice */}
-                                <div className="flex items-center text-sm text-gray-500 mb-8">
+                                    {/* Confirmation */}
+                                    <AnimatePresence mode="wait">
+                                    {selectedType && selectedTime && (
+                                        <motion.div 
+                                        key="confirmation-step"
+                                        className="mb-8"
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
+                                        variants={fadeVariants}
+                                        >
+                                        <motion.div variants={itemVariants} className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-semibold">Confirm Your Meeting</h3>
+                                            <motion.button 
+                                            onClick={() => setSelectedTime(null)} 
+                                            className="text-indigo-600 text-sm hover:underline"
+                                            whileHover={{ x: -2 }}
+                                            whileTap={{ scale: 0.97 }}
+                                            >
+                                            Back to time selection
+                                            </motion.button>
+                                        </motion.div>
+                                        
+                                        <motion.div 
+                                            variants={itemVariants}
+                                            className="bg-indigo-50 p-6 rounded-xl mb-6"
+                                        >
+                                            <h4 className="font-semibold mb-4">Meeting Details</h4>
+                                            <motion.div 
+                                            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                                            variants={containerVariants}
+                                            >
+                                            <motion.div 
+                                                variants={itemVariants}
+                                                whileHover={{ y: -3, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                                                className="bg-white p-4 rounded-lg"
+                                            >
+                                                <p className="text-gray-500 text-sm">Meeting Type</p>
+                                                <p className="font-medium">{selectedType.title}</p>
+                                            </motion.div>
+                                            <motion.div 
+                                                variants={itemVariants}
+                                                whileHover={{ y: -3, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                                                className="bg-white p-4 rounded-lg"
+                                            >
+                                                <p className="text-gray-500 text-sm">Duration</p>
+                                                <p className="font-medium">{selectedType.duration}</p>
+                                            </motion.div>
+                                            <motion.div 
+                                                variants={itemVariants}
+                                                whileHover={{ y: -3, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                                                className="bg-white p-4 rounded-lg"
+                                            >
+                                                <p className="text-gray-500 text-sm">Date</p>
+                                                <p className="font-medium">Tomorrow</p>
+                                            </motion.div>
+                                            <motion.div 
+                                                variants={itemVariants}
+                                                whileHover={{ y: -3, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                                                className="bg-white p-4 rounded-lg"
+                                            >
+                                                <p className="text-gray-500 text-sm">Time</p>
+                                                <p className="font-medium">{selectedTime}</p>
+                                            </motion.div>
+                                            </motion.div>
+                                        </motion.div>
+                                        
+                                        <motion.button 
+                                            variants={buttonVariants}
+                                            initial="rest"
+                                            whileHover="hover"
+                                            whileTap="tap"
+                                            onClick={handleBookMeeting}
+                                            className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-medium"
+                                        >
+                                            Book Meeting
+                                        </motion.button>
+                                        </motion.div>
+                                    )}
+                                    </AnimatePresence>
+
+                                    {/* Timezone Notice */}
+                                    <motion.div 
+                                    variants={itemVariants} 
+                                    className="flex items-center text-sm text-gray-500 mb-8"
+                                    >
                                     <Globe className="w-4 h-4 mr-2" />
                                     Times shown in your local timezone
-                                </div>
+                                    </motion.div>
 
-                                {/* Next Steps */}
-                                <div className="bg-gray-50 rounded-2xl p-6">
+                                    {/* Next Steps */}
+                                    <motion.div 
+                                    variants={itemVariants}
+                                    className="bg-gray-50 rounded-2xl p-6"
+                                    >
                                     <h3 className="text-lg font-semibold mb-4">What happens next?</h3>
-                                    <div className="space-y-4">
+                                    <motion.div 
+                                        className="space-y-4"
+                                        variants={containerVariants}
+                                    >
                                         {[
-                                            "You'll receive a calendar invite with meeting details",
-                                            "We'll send you a brief questionnaire to understand your needs",
-                                            "Our team will prepare a personalized demo",
-                                            "Join the meeting via the provided video conference link"
+                                        "You'll receive a calendar invite with meeting details",
+                                        "We'll send you a brief questionnaire to understand your needs",
+                                        "Our team will prepare a personalized demo",
+                                        "Join the meeting via the provided video conference link"
                                         ].map((step, i) => (
-                                            <div key={i} className="flex items-center text-gray-600">
-                                                <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-3 text-sm font-medium">
-                                                    {i + 1}
-                                                </div>
-                                                {step}
-                                            </div>
+                                        <motion.div 
+                                            key={i} 
+                                            variants={itemVariants}
+                                            className="flex items-center text-gray-600"
+                                        >
+                                            <motion.div 
+                                            whileHover={{ scale: 1.1, backgroundColor: "#E0E7FF" }}
+                                            className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-3 text-sm font-medium"
+                                            >
+                                            {i + 1}
+                                            </motion.div>
+                                            {step}
+                                        </motion.div>
                                         ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                    </motion.div>
+                                    </motion.div>
+                                </motion.div>
+                                )}
+                            </AnimatePresence>
+                            </motion.div>
                     )}
                 </div>
             </section>
@@ -541,9 +841,9 @@ export const Contact = () => {
                             Start Free Trial
                             <ArrowRight className="ml-2 w-5 h-5" />
                         </a>
-                        <button className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-indigo-600 transition-all duration-200">
+                        {/* <button className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-indigo-600 transition-all duration-200">
                             View Documentation
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </section>

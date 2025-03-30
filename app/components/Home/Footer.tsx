@@ -15,13 +15,13 @@ const Footer = () => {
   const socialLinks = [
     { 
       icon: Twitter, 
-      href: "#", 
+      href: "https://x.com/harmanpreet277", 
       label: "Twitter",
       colorClass: "bg-[#1DA1F2] text-white hover:bg-opacity-80"
     },
     { 
       icon: Github, 
-      href: "#", 
+      href: "https://github.com/HarmanPreet-Singh-XYT", 
       label: "GitHub",
       colorClass: "bg-gray-900 text-white hover:bg-opacity-80"
     },

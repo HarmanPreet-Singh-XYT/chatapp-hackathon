@@ -9,18 +9,24 @@ const CTA = () => {
                 Choose your path: Start free, schedule a demo, or connect with our experts
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-indigo-600 px-8 py-4 rounded-full font-medium hover:shadow-lg transition-all duration-200 flex items-center justify-center">
-                    <Rocket className="mr-2 w-5 h-5" />
-                    Start Free Trial
-                </button>
-                <button className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center justify-center">
-                    <MessageCircle className="mr-2 w-5 h-5" />
-                    Schedule Demo
-                </button>
-                <button className="border-2 border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center justify-center">
-                    <HelpCircle className="mr-2 w-5 h-5" />
-                    Contact Sales
-                </button>
+                <a href="/auth">
+                    <button className="bg-white hover:cursor-pointer text-indigo-600 px-8 py-4 rounded-full font-medium hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+                        <Rocket className="mr-2 w-5 h-5" />
+                        Start Free Trial
+                    </button>
+                </a>
+                <a href="/contact">
+                    <button className="border-2 hover:cursor-pointer border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center justify-center">
+                        <MessageCircle className="mr-2 w-5 h-5" />
+                        Schedule Demo
+                    </button>
+                </a>
+                <a href="/contact">
+                    <button className="border-2 hover:cursor-pointer border-white text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center justify-center">
+                        <HelpCircle className="mr-2 w-5 h-5" />
+                        Contact Sales
+                    </button>
+                </a>
             </div>
         </div>
     </section>

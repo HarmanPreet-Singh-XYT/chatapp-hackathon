@@ -101,13 +101,15 @@ const Plans = ({ isAnnual, setIsAnnual, tiers }) => {
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-3 rounded-full font-semibold transition-all duration-300 ${
-                tier.recommended 
-                  ? 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:shadow-xl hover:shadow-green-500/30' 
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              }`}>
-                {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
-              </button>
+              <a href={tier.name==='Business' ? '/contact' : '/auth'}>
+                <button className={`w-full py-3 rounded-full hover:cursor-pointer font-semibold transition-all duration-300 ${
+                  tier.recommended 
+                    ? 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:shadow-xl hover:shadow-green-500/30' 
+                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                }`}>
+                  {tier.name === 'Business' ? 'Contact Sales' : 'Get Started'}
+                </button>
+              </a>
             </div>
           </motion.div>
         ))}
